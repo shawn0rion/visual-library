@@ -1,0 +1,26 @@
+body{
+    display: flex;
+    height: 100vh;
+}
+
+nav{
+    width: 100px;
+}
+
+.tags-header{
+    display: flex;
+    justify-content: space-between;
+    height: 20px;
+    align-items: center;
+    width: 100%;
+}
+
+.tag{
+    border: 1px solid #222;
+    width: 100%;
+}
+
+.tag:focus{
+    outline: none;
+    cursor:grabbing;
+}
