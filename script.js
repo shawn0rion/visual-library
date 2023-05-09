@@ -30,13 +30,24 @@ class TagsUI{
         this.btn.addEventListener('click', () => this.renderTag());
     }
 
-    dragTag(element){
-        element.draggable = true;
-        element.addEventListener('drag', event => {
+    dragTag(tag){
+        tag.draggable = true;
+        tag.addEventListener('drag', event => {
             if (event.clientX !== 0 && event.clientY !== 0){
                 lastPosition.x = event.clientX;
                 lastPosition.y = event.clientY;
             }
+        })
+        tag.addEventListener('dragend', event => {
+            // use list of DOM image objects to check if tag is dropped in any img.
+            imagesUI.images.forEach(image => {
+                if(image.inDropZone()){
+                    const imgObject = images.getImageByFile(image.img.src);
+                    imgObject.addTag(event.target.value);
+                    image.addTag(event.target.value);
+                    console.log(imgObject.tags)
+                } 
+            })
         })
     }
 
@@ -69,10 +80,88 @@ class TagsUI{
             })
         });
     } 
-}   
+}
+
+class Image{
+    constructor(file){
+        this.img = file;
+        this.tags = [];
+    }
+    addTag(tag){
+        this.tags.push(tag);
+    }
+}
+
+class Images{
+    constructor(){
+        this.images = [];
+    }
+
+    addImage(img){
+        this.images.push(img);
+    }
+    // pass imageUI.img.src here, after drop
+    // returned img can be used for add Tag function
+    getImageByFile(file){
+        return this.images.filter(image => image.img === file)[0];
+    }
+
+    // returns array of images, which can be displayed in the gallery
+    getImagesByTag(tag){
+        return this.images.filter(image => image.tags.includes(tag));
+    }
+}
+
+class ImageUI{
+    constructor(){
+        this.wrapper = document.createElement('div');
+        this.img = document.createElement('img');
+        this.tags = document.createElement('ul');
+    }
+    createImage(file){
+        this.img.src = file;
+        this.tags.classList.add('tags');
+        this.wrapper.appendChild(this.img);
+        this.wrapper.appendChild(this.tags);
+        imagesUI.container.appendChild(this.wrapper);
+        console.log(this.wrapper);
+        console.log(imagesUI.container);
+    }
+
+    addTag(tag){
+        const tagItem = document.createElement('li');
+        tagItem.textContent = tag;
+        this.tags.appendChild(tagItem);
+    }
+
+    inDropZone(){
+        const bounds = this.wrapper.getBoundingClientRect();
+        if (lastPosition.x <= bounds.right &&
+            lastPosition.x >= bounds.left &&
+            lastPosition.y <= bounds.bottom &&
+            lastPosition.y >= bounds.top){
+            return true;
+        }
+        return false;
+    }
+}
+
+class ImagesUI{
+    constructor(){
+        this.container = document.querySelector('.gallery')
+        this.images = [];
+    }
+
+    addImage(image){
+        this.images.push(image);
+    }
+}
+
 
 const tags = new Tags();
 const tagsUI = new TagsUI();
+const images = new Images();
+const imagesUI = new ImagesUI();
 
 const fileInput = document.querySelector('#file-input');
 const uploadBtn = document.querySelector('.new-image');
@@ -89,6 +178,12 @@ function readFile(event){
         // event triggers after file is read
         reader.onload = function (e) {
             // render Image
+            const img = new Image(e.target.result); 
+            const imgWrapper = new ImageUI();
+            imgWrapper.createImage(e.target.result);
+            images.addImage(img);
+            imagesUI.addImage(imgWrapper);
+
         }
         // read file
         reader.readAsDataURL(file);
