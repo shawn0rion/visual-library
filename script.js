@@ -123,9 +123,6 @@ class ImageUI{
         this.tags.classList.add('tags');
         this.wrapper.appendChild(this.img);
         this.wrapper.appendChild(this.tags);
-        imagesUI.container.appendChild(this.wrapper);
-        console.log(this.wrapper);
-        console.log(imagesUI.container);
     }
 
     addTag(tag){
@@ -155,6 +152,34 @@ class ImagesUI{
     addImage(image){
         this.images.push(image);
     }
+
+    clearGallery(){
+        while(this.container.firstChild){
+            this.container.removeChild(this.container.lastChild);
+            console.log('removed');
+        }
+    }
+
+    renderGallery(tag = ''){
+        this.clearGallery();
+        console.log(this.images);
+        if (tag === ''){
+            this.images.forEach(image => {
+                this.container.appendChild(image.wrapper);
+            }) 
+        }
+        else{
+            // filter for imageUI with tag
+            this.images.forEach( image => {
+                const tags = image.wrapper.querySelector('.tags');
+                const hasTag = [...tags.childNodes].some(imageTag => imageTag.textContent === tag);
+                if (hasTag){
+                    console.log('has tag: ', image);
+                    this.container.appendChild(image.wrapper);
+                }
+            })
+        }
+    }
 }
 
 
@@ -163,12 +188,20 @@ const tagsUI = new TagsUI();
 const images = new Images();
 const imagesUI = new ImagesUI();
 
+const searchInput = document.querySelector('.search-input');
+const searchButton = document.querySelector('.search-button');
 const fileInput = document.querySelector('#file-input');
 const uploadBtn = document.querySelector('.new-image');
 uploadBtn.addEventListener('click', () => {
     fileInput.click();
 })
 fileInput.addEventListener('change', event => readFile(event));
+
+searchButton.addEventListener('click', event => {
+    const tag = searchInput.value;
+    console.log(tag);
+    imagesUI.renderGallery(tag);
+})
 
 
 function readFile(event){
@@ -183,6 +216,7 @@ function readFile(event){
             imgWrapper.createImage(e.target.result);
             images.addImage(img);
             imagesUI.addImage(imgWrapper);
+            imagesUI.renderGallery();
 
         }
         // read file
