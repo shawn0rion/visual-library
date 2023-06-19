@@ -5,16 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/a541b204e2.js" crossorigin="anonymous"></script>
     <title>Document</title>
 </head>
 <body>
-    <header>
-        <input type="text" name="" id="" class="search-input">
-        <button class="search-button">search</button>
-    </header>
-    <nav class="sidebar">
-        <button class="new-image">Add Image</button>
-        <input type="file" name="" id="file-input" accept="/image" style="display: none;">
+    <header>Visual Library</header>
+
+     <nav class="sidebar">
+
+        <div class="new-image-wrapper">
+            <p>Add Image</p>
+            <button class="new-image">+ </button>
+
+        </div>
+        <input type="file" name="" id="file-input" multiple accept="/image" style="display: none;">
         <div class="tags-wrapper">
             <div class="tags-header">
                 <p>Tags</p>
@@ -24,7 +28,16 @@
             </ul>
         </div>
     </nav>
-    <div class="gallery"></div>
+    <div class="search-wrapper">
+        <div class="search-box">
+            <input type="text" name="" id="" class="search-input">
+            <button class="search-button"><i class="fas fa-x"></i></button>
+        </div>
+
+    </div>
+    <div class="gallery">
+    
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

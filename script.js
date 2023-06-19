@@ -195,31 +195,39 @@ const uploadBtn = document.querySelector('.new-image');
 uploadBtn.addEventListener('click', () => {
     fileInput.click();
 })
-fileInput.addEventListener('change', event => readFile(event));
+fileInput.addEventListener('change', event => readFiles(event));
 
-searchButton.addEventListener('click', event => {
-    const tag = searchInput.value;
-    console.log(tag);
-    imagesUI.renderGallery(tag);
+searchInput.addEventListener('keydown', event => {
+    if(event.key == 'Enter'){
+        const tag = searchInput.value;
+        imagesUI.renderGallery(tag);
+
+    }
 })
 
+searchButton.addEventListener('click', event =>{
+    searchInput.value = '';
+})
 
-function readFile(event){
-    const file = event.target.files[0];
-    if (file){
-        const reader = new FileReader();
-        // event triggers after file is read
-        reader.onload = function (e) {
-            // render Image
-            const img = new Image(e.target.result); 
-            const imgWrapper = new ImageUI();
-            imgWrapper.createImage(e.target.result);
-            images.addImage(img);
-            imagesUI.addImage(imgWrapper);
-            imagesUI.renderGallery();
+function readFiles(event){
+    const files = Array.from(event.target.files);
+    files.forEach(file => {
+        if (file){
+            const reader = new FileReader();
+            // event triggers after file is read
+            reader.onload = function (e) {
+                // render Image
+                const img = new Image(e.target.result); 
+                const imgWrapper = new ImageUI();
+                imgWrapper.createImage(e.target.result);
+                images.addImage(img);
+                imagesUI.addImage(imgWrapper);
+                imagesUI.renderGallery();
+
+            }
+            // read file
+            reader.readAsDataURL(file);
 
         }
-        // read file
-        reader.readAsDataURL(file);
-    }
+    })
 }
